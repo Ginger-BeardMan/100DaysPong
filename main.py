@@ -1,13 +1,15 @@
 from turtle import Screen, Turtle
 from paddles import Paddles
 from ball import Ball
+from scoreboard import Scoreboard
 import time
 
 net = Turtle()
 screen = Screen()
 r_paddle = Paddles((350, 0))
 l_paddle = Paddles((-350, 0))
-pong_ball = Ball()
+ball = Ball()
+scoreboard = Scoreboard()
 
 screen.setup(width=800, height=600)
 screen.bgcolor('black')
@@ -42,6 +44,31 @@ game_is_on = True
 while game_is_on:
     screen.update()
     time.sleep(0.1)
-    pong_ball.movement()
+    ball.movement()
+    # scoreboard.player_score()
+
+    # ball collision with wall
+    if ball.ycor() >= 285 or ball.ycor() <= -285:
+        ball.bounce_y()
+
+    # ball collision with paddles
+    if ball.distance(r_paddle) < 40 and ball.xcor() >= 330 or ball.distance(l_paddle) < 40 and ball.xcor() <= -330:
+        ball.bounce_x()
+
+        if ball.x_move > 0:
+            ball.x_move += 5
+        elif ball.x_move < 0:
+            ball.x_move -= 5
+
+    # score and resetting the ball
+    if ball.xcor() > 370:
+        ball.player_miss()
+        ball.x_move = -10
+        scoreboard.p1_point()
+    elif ball.xcor() < -370:
+        ball.player_miss()
+        ball.x_move = 10
+        scoreboard.p2_point()
+
 
 screen.exitonclick()
